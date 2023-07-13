@@ -1,0 +1,18 @@
+The demo scenes includes CC licensed assets that require attribution:
+
+Preceptory and Dower House by Andy Woodhead - https://sketchfab.com/Andywoodhead
+Grass, Plants, Trees and Portal by DJMaesen - https://sketchfab.com/bumstrum/models
+Abbey Ruins by Tony Flanagan - https://sketchfab.com/tonyflanagan
+Rocks by Cleuza Costa - https://sketchfab.com/CleuzaCosta
+Realistic Cracked Tree by Aliosa - https://sketchfab.com/aliosa123
+
+
+These assets are licensed under MIT license:
+
+URP Water Shader - https://github.com/aniruddhahar/URP-WaterShaders
+
+
+These assets are public domain:
+
+All ground textures by - https://3dtextures.me
+All sounds by pixabay - https://pixabay.com
