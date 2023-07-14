@@ -249,6 +249,9 @@ namespace InfiniteRealms.Editor
         {
             var importer = AssetImporter.GetAtPath(assetPath);
 
+            if (Path.GetExtension(assetPath).Equals(".cs") || Path.GetExtension(assetPath).Equals(".js"))
+                return;
+            
             if (importer != null && string.IsNullOrEmpty(importer.assetBundleName))
             {
                 importer.assetBundleName = assetBundleName;
