@@ -56,42 +56,11 @@ namespace InfiniteRealms.Editor
             }
             
             // Sanitize unwanted Objects
-            var cameras = activeScene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Camera>()).ToArray();
-            foreach (var cam in cameras)
-            {
-                var assetPath = AssetDatabase.GetAssetPath(cam.gameObject);
-                AssignAssetBundleTagToAsset(assetPath, string.Empty);
-            }
-            
-            var audioListener = activeScene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<AudioListener>()).ToArray();
-            foreach (var listener in audioListener)
-            {
-                var assetPath = AssetDatabase.GetAssetPath(listener.gameObject);
-                AssignAssetBundleTagToAsset(assetPath, string.Empty);
-            }
-            
-            var windZones = activeScene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<WindZone>()).ToArray();
-            foreach (var zone in windZones)
-            {
-                var assetPath = AssetDatabase.GetAssetPath(zone.gameObject);
-                AssignAssetBundleTagToAsset(assetPath, string.Empty);
-            }
-            
-            var volumes = activeScene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Volume>()).ToArray();
-            foreach (var volume in volumes)
-            {
-                var assetPath = AssetDatabase.GetAssetPath(volume.gameObject);
-                AssignAssetBundleTagToAsset(assetPath, string.Empty);
-            }
-            
-            var lights = activeScene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Light>()).ToArray();
-            foreach (var light in lights)
-            {
-                if (light.type != LightType.Directional) continue;
-                
-                var assetPath = AssetDatabase.GetAssetPath(light.gameObject);
-                AssignAssetBundleTagToAsset(assetPath, string.Empty);
-            }
+            SanitizeAssetBundleTags<Camera>(activeScene);
+            SanitizeAssetBundleTags<AudioListener>(activeScene);
+            SanitizeAssetBundleTags<WindZone>(activeScene);
+            SanitizeAssetBundleTags<Volume>(activeScene);
+            SanitizeAssetBundleTags<Light>(activeScene, light => light.type == LightType.Directional);
 
             Debug.Log("Assets in the scene and the scene itself have been tagged for the AssetBundle: " + assetBundleName);
         }
@@ -263,6 +232,18 @@ namespace InfiniteRealms.Editor
             if (importer != null && string.IsNullOrEmpty(importer.assetBundleName))
             {
                 importer.assetBundleName = assetBundleName;
+            }
+        }
+        
+        private static void SanitizeAssetBundleTags<T>(Scene activeScene, Func<T, bool> predicate = null) where T : Component
+        {
+            var components = activeScene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<T>()).ToArray();
+            foreach (var component in components)
+            {
+                if (predicate != null && !predicate(component)) continue;
+
+                var assetPath = AssetDatabase.GetAssetPath(component.gameObject);
+                AssignAssetBundleTagToAsset(assetPath, string.Empty);
             }
         }
     }
