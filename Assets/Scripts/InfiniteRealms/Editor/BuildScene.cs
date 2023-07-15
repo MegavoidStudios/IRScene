@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 using InfiniteRealms.Data;
 using Newtonsoft.Json;
 using UnityEditorInternal;
+using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
 namespace InfiniteRealms.Editor
@@ -73,6 +74,13 @@ namespace InfiniteRealms.Editor
             foreach (var zone in windZones)
             {
                 var assetPath = AssetDatabase.GetAssetPath(zone.gameObject);
+                AssignAssetBundleTagToAsset(assetPath, string.Empty);
+            }
+            
+            var volumes = activeScene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Volume>()).ToArray();
+            foreach (var volume in volumes)
+            {
+                var assetPath = AssetDatabase.GetAssetPath(volume.gameObject);
                 AssignAssetBundleTagToAsset(assetPath, string.Empty);
             }
             
