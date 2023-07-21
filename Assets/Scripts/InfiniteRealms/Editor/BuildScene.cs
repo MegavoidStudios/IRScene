@@ -19,13 +19,25 @@ namespace InfiniteRealms.Editor
         [MenuItem("Infinite Realms/Complete Scene Build")]
         private static void CleanBuild()
         {
+            if (!CheckBuildSupport())
+                return;
+            
             ClearAllAssetBundleTags();
             AssignAssetBundleTags();
             BuildAssetBundles();
         }
         
-        [MenuItem("Infinite Realms/Build Steps/1 - Clear All Asset Bundle Tags")]
-        public static void ClearAllAssetBundleTags()
+        [MenuItem("Infinite Realms/Build Steps/1 - Check Build Modules")]
+        private static void CheckBuildSupportAlone()
+        {
+            if (!CheckBuildSupport())
+                return;
+            
+            EditorUtility.DisplayDialog("Build Support Check", "Everything is installed, ready to go", "OK");
+        }
+
+        [MenuItem("Infinite Realms/Build Steps/2 - Clear All Asset Bundle Tags")]
+        private static void ClearAllAssetBundleTags()
         {
             // Hole alle Assetpfade im Projekt
             var allAssetPaths = AssetDatabase.GetAllAssetPaths();
@@ -38,8 +50,8 @@ namespace InfiniteRealms.Editor
             Debug.Log("All AssetBundle tags have been cleared.");
         }
         
-        [MenuItem("Infinite Realms/Build Steps/2 - Tag Assets in Scene")]
-        public static void AssignAssetBundleTags()
+        [MenuItem("Infinite Realms/Build Steps/3 - Tag Assets in Scene")]
+        private static void AssignAssetBundleTags()
         {
             var activeScene = SceneManager.GetActiveScene();
             var assetBundleName = activeScene.name;
@@ -65,7 +77,7 @@ namespace InfiniteRealms.Editor
             Debug.Log("Assets in the scene and the scene itself have been tagged for the AssetBundle: " + assetBundleName);
         }
 
-        [MenuItem("Infinite Realms/Build Steps/3 - Build AssetBundles")]
+        [MenuItem("Infinite Realms/Build Steps/4 - Build AssetBundles")]
         private static void BuildAssetBundles()
         {
             var tempPath = Path.GetTempPath();
@@ -178,6 +190,23 @@ namespace InfiniteRealms.Editor
             Debug.Log("Successfully built package: '" + zipFilePath + "'.");
         }
 
+        private static bool CheckBuildSupport()
+        {
+            if (!BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows))
+            {
+                EditorUtility.DisplayDialog("Build error", "Windows Build Support is not installed", "OK");
+                return false;
+            }
+            
+            if (!BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.Standalone, BuildTarget.StandaloneOSX))
+            {
+                EditorUtility.DisplayDialog("Build error", "macOS Build Support is not installed", "OK");
+                return false;
+            }
+
+            return true;
+        }
+        
         private static void AssignAssetBundleTagRecursively(GameObject obj, string assetBundleName)
         {
             // Assign the AssetBundle name to the object's prefab (if it has one)
