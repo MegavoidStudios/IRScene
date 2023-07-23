@@ -3,4 +3,4 @@ Starting with version 2023.0.2 [Infinite Realms](https://infinite-realms.app/dev
 
 This GitHub project contains all scripts and a demo scene to get started.
 
-More information an an in-depth tutorial can be found at https://infinite-realms.app/create
+More information and an in-depth tutorial can be found at https://infinite-realms.app/create
