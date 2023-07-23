@@ -39,7 +39,7 @@ namespace InfiniteRealms.Editor
         [MenuItem("Infinite Realms/Build Steps/2 - Clear All Asset Bundle Tags")]
         private static void ClearAllAssetBundleTags()
         {
-            // Hole alle Assetpfade im Projekt
+            // Get all Asset paths in projekt
             var allAssetPaths = AssetDatabase.GetAllAssetPaths();
 
             foreach (var assetPath in allAssetPaths)
@@ -85,6 +85,8 @@ namespace InfiniteRealms.Editor
             var windowsDirectory = Path.Combine(tempPath, "irExport/windows");
             var macosDirectory = Path.Combine(tempPath, "irExport/macos");
 
+            Debug.Log(Path.Combine(tempPath, "irExport"));
+
             try
             {
                 // Clean up temporary directories
@@ -121,12 +123,22 @@ namespace InfiniteRealms.Editor
             {
                 throw new Exception("Failed building Windows AssetsBundles. Is 'Windows Build Support' installed for this Unity version?");
             }
-
+            
             try
             {
                 // Assemble Windows AssetBundles
-                File.Move(Path.Combine(windowsDirectory, assetBundleName + "_assets"),
-                    Path.Combine(outputDirectory, windowsAssets));
+                var windowsAssetsPath = GetAssetsBundlePath(windowsDirectory);
+
+                if (windowsAssetsPath != null)
+                {
+                    File.Move(windowsAssetsPath,
+                        Path.Combine(outputDirectory, windowsAssets));
+                }
+                else
+                {
+                    windowsAssets = "";
+                }
+                
                 File.Move(Path.Combine(windowsDirectory, assetBundleName + "_scene"),
                     Path.Combine(outputDirectory, windowsScene));
             }
@@ -146,12 +158,22 @@ namespace InfiniteRealms.Editor
             {
                 throw new Exception("Failed building macOS AssetsBundles. Is 'Mac Build Support' installed for this Unity version?");
             }
-
+            
             try
             {
                 // Assemble macOS AssetBundles
-                File.Move(Path.Combine(macosDirectory, assetBundleName + "_assets"),
-                    Path.Combine(outputDirectory, macosAssets));
+                var macosAssetsPath = GetAssetsBundlePath(macosDirectory);
+
+                if (macosAssetsPath != null)
+                {
+                    File.Move(macosAssetsPath,
+                        Path.Combine(outputDirectory, macosAssets));
+                }
+                else
+                {
+                    macosAssets = "";
+                }
+
                 File.Move(Path.Combine(macosDirectory, assetBundleName + "_scene"),
                     Path.Combine(outputDirectory, macosScene));
             }            
@@ -274,6 +296,13 @@ namespace InfiniteRealms.Editor
                 var assetPath = AssetDatabase.GetAssetPath(component.gameObject);
                 AssignAssetBundleTagToAsset(assetPath, string.Empty);
             }
+        }
+        
+        private static string GetAssetsBundlePath(string directory)
+        {
+            var assetBundlePaths = Directory.GetFiles(directory, "*_assets");
+    
+            return assetBundlePaths.Length == 0 ? null : assetBundlePaths[0];
         }
     }
 }
